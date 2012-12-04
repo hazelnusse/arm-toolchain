@@ -2,23 +2,17 @@
 # Thumb2 Newlib Toolchain
 # Written by Elias Önal <EliasOenal@gmail.com>, released as public domain.
 
-GCC_URL="https://launchpad.net/gcc-linaro/4.7/4.7-2012.08/+download/gcc-linaro-4.7-2012.08.tar.bz2"
-GCC_VERSION="gcc-linaro-4.7-2012.08"
-
-#GCC_URL="ftp://gcc.gnu.org/pub/gcc/snapshots/4.8-20120610/gcc-4.8-20120610.tar.bz2"
-#GCC_VERSION="gcc-4.8-20120610"
+GCC_URL="https://launchpad.net/gcc-linaro/4.7/4.7-2012.11/+download/gcc-linaro-4.7-2012.11.tar.bz2"
+GCC_VERSION="gcc-linaro-4.7-2012.11"
 
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/newlib-1.20.0.tar.gz"
 NEWLIB_VERSION="newlib-1.20.0"
 
-BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.gz"
-BINUTILS_VERSION="binutils-2.22"
+BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/binutils-2.23.1.tar.gz"
+BINUTILS_VERSION="binutils-2.23.1"
 
-GDB_URL="http://ftp.gnu.org/gnu/gdb/gdb-7.4.1.tar.gz"
-GDB_VERSION="gdb-7.4.1"
-
-STLINK_REPOSITORY="git://github.com/texane/stlink.git"
-STLINK="stlink"
+GDB_URL="http://ftp.gnu.org/gnu/gdb/gdb-7.5.1.tar.gz"
+GDB_VERSION="gdb-7.5.1"
 
 DO_REINSTALLS=true
 
@@ -27,23 +21,9 @@ set -e # abort on errors
 OS_TYPE=$(uname)
 
 # locate the tools
-if [[ `which curl` ]]; then
-FETCH="curl -kOL"
-elif [[ `which wget` ]]; then
 FETCH="wget -c --no-check-certificate "
-else
-echo "Neither curl or wget located."
-exit
-fi
 
-if [[ `which gtar` ]]; then
-TAR=gtar
-elif [[ `which tar` ]]; then
 TAR=tar
-else
-echo "tar required."
-exit
-fi
 
 if [[ `which gmake` ]]; then
 MAKE=gmake
@@ -71,9 +51,9 @@ if [ ! -e ${GDB_VERSION}.tar.gz ]; then
 ${FETCH} ${GDB_URL}
 fi
 
-if [ ! -e ${STLINK} ]; then
-git clone ${STLINK_REPOSITORY}
-fi
+#if [ ! -e ${STLINK} ]; then
+#git clone ${STLINK_REPOSITORY}
+#fi
 
 # Extract
 if [ ! -e ${GCC_VERSION} ]; then
@@ -98,7 +78,7 @@ fi
 # Configure (to the operating system)
 TARGET=arm-none-eabi
 PREFIX="$HOME/toolchain"
-CPUS=2
+CPUS=9
 export PATH="${PREFIX}/bin:${PATH}"
 export CC=gcc
 
@@ -198,10 +178,16 @@ GCCFLAGS="--target=${TARGET} \
 	--enable-poison-system-directories \
 	--enable-lto \
 	--enable-gold \
+  --disable-decimal-float \
+  --disable-threads \
 	--disable-libmudflap \
+  --disable-libssp \
 	--disable-libgomp \
+  --disable-libquadmath \
 	--disable-libstdcxx-pch \
 	--disable-libunwind-exceptions"
+#  --enable-cxx-flags='-fno-exceptions'"
+#  --enable-build-with-cxx \
 
 # only build c the first time
 GCCFLAGS_ONE="--without-headers --enable-languages=c"
@@ -306,24 +292,3 @@ cd ..
 
 fi
 
-
-if [ ! -e stlink.complete ]; then
-
-cd stlink
-./autogen.sh
-cd ..
-mkdir build-stlink
-cd build-stlink
-../stlink/configure --prefix=$PREFIX
-${MAKE} -j${CPUS}
-${MAKE} install
-cd ..
-touch stlink.complete
-
-elif $DO_REINSTALLS; then
-
-cd stlink
-#${MAKE} install
-cd ..
-
-fi
