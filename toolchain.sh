@@ -2,11 +2,11 @@
 # Thumb2 Newlib Toolchain
 # Written by Elias Önal <EliasOenal@gmail.com>, released as public domain.
 
-GCC_URL="https://launchpad.net/gcc-linaro/4.7/4.7-2012.11/+download/gcc-linaro-4.7-2012.11.tar.bz2"
-GCC_VERSION="gcc-linaro-4.7-2012.11"
+GCC_URL="https://launchpad.net/gcc-linaro/4.7/4.7-2013.01/+download/gcc-linaro-4.7-2013.01.tar.bz2"
+GCC_VERSION="gcc-linaro-4.7-2013.01"
 
-NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/newlib-1.20.0.tar.gz"
-NEWLIB_VERSION="newlib-1.20.0"
+NEWLIB_URL="ftp://sourceware.org/pub/newlib/newlib-2.0.0.tar.gz"
+NEWLIB_VERSION="newlib-2.0.0"
 
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/binutils-2.23.1.tar.gz"
 BINUTILS_VERSION="binutils-2.23.1"
@@ -58,13 +58,13 @@ fi
 # Extract
 if [ ! -e ${GCC_VERSION} ]; then
 ${TAR} -xf ${GCC_VERSION}.tar.bz2
-patch -N ${GCC_VERSION}/gcc/config/arm/t-arm-elf gcc-multilib.patch
+#patch -N ${GCC_VERSION}/gcc/config/arm/t-arm-elf gcc-multilib.patch
 fi
 
 if [ ! -e ${NEWLIB_VERSION} ]; then
 ${TAR} -xf ${NEWLIB_VERSION}.tar.gz
-patch -N ${NEWLIB_VERSION}/libgloss/arm/linux-crt0.c newlib-optimize.patch
-patch -N ${NEWLIB_VERSION}/newlib/libc/machine/arm/arm_asm.h newlib-lto.patch
+#patch -N ${NEWLIB_VERSION}/libgloss/arm/linux-crt0.c newlib-optimize.patch
+#patch -N ${NEWLIB_VERSION}/newlib/libc/machine/arm/arm_asm.h newlib-lto.patch
 fi
 
 if [ ! -e ${BINUTILS_VERSION} ]; then
